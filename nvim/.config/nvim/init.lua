@@ -9,6 +9,10 @@ vim.opt.number = true
 vim.opt.relativenumber = true
 vim.o.statuscolumn = "%s%=%l %r"
 
+vim.opt.clipboard = "unnamedplus"
+vim.api.nvim_set_keymap("n", "x", '"_x', { noremap = true, silent = true })
+vim.api.nvim_set_keymap("n", "X", '"_x', { noremap = true, silent = true })
+
 vim.keymap.set("n", "<c-k>", ":wincmd k<CR>")
 vim.keymap.set("n", "<c-j>", ":wincmd j<CR>")
 vim.keymap.set("n", "<c-h>", ":wincmd h<CR>")
