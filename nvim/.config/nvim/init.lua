@@ -3,6 +3,15 @@ vim.cmd("set tabstop=4")
 vim.cmd("set softtabstop=4")
 vim.cmd("set shiftwidth=4")
 
+vim.api.nvim_create_autocmd({"FileType"}, {
+  pattern = {"javascript", "typescript", "css"},
+  callback = function()
+    vim.opt_local.tabstop = 2
+    vim.opt_local.shiftwidth = 2
+    vim.opt_local.expandtab = true
+  end,
+})
+
 vim.g.mapleader = " "
 
 vim.opt.number = true

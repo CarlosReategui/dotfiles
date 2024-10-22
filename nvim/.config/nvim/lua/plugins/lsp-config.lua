@@ -21,6 +21,7 @@ return {
 				ensure_installed = {
 					"lua_ls",
 					"pylsp",
+                    "ts_ls",
 				},
 			})
 		end,
