@@ -103,9 +103,15 @@ source $ZSH/oh-my-zsh.sh
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 
+# Starship
 eval "$(starship init zsh)"
 
+# Aliases
 alias lg='lazygit'
 alias ae='source .venv/bin/activate'
 alias ke='deactivate'
 alias s='source ~/.zshrc'
+alias nf='fzf -m --preview="bat --color=always {}" --bind "enter:become(nvim {+})"' 
+
+# fzf
+source <(fzf --zsh)
