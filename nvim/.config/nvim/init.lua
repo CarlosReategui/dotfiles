@@ -3,8 +3,8 @@ vim.cmd("set tabstop=4")
 vim.cmd("set softtabstop=4")
 vim.cmd("set shiftwidth=4")
 
-vim.api.nvim_create_autocmd({"FileType"}, {
-  pattern = {"javascript", "typescript", "css"},
+vim.api.nvim_create_autocmd({ "FileType" }, {
+  pattern = { "javascript", "typescript", "css", "lua" },
   callback = function()
     vim.opt_local.tabstop = 2
     vim.opt_local.shiftwidth = 2
@@ -13,6 +13,11 @@ vim.api.nvim_create_autocmd({"FileType"}, {
 })
 
 vim.g.mapleader = " "
+
+vim.g.copilot_enabled = false
+vim.keymap.set("n", "<leader>ce", ":Copilot enable<CR>")
+vim.keymap.set("n", "<leader>cd", ":Copilot disable<CR>")
+vim.keymap.set("i", "<c-s>", "<Plug>(copilot-suggest)")
 
 vim.opt.number = true
 vim.opt.relativenumber = true
