@@ -112,6 +112,19 @@ alias ae='source .venv/bin/activate'
 alias ke='deactivate'
 alias s='source ~/.zshrc'
 alias nf='fzf -m --preview="bat --color=always {}" --bind "enter:become(nvim {+})"' 
+alias p='python3'
 
 # fzf
 source <(fzf --zsh)
+
+# nvm
+export NVM_DIR="$HOME/.nvm"
+[ -s "/usr/share/nvm/init-nvm.sh" ] && \. "/usr/share/nvm/init-nvm.sh"  # Carga NVM
+
+# pyenv
+export PYENV_ROOT="$HOME/.pyenv"
+export PATH="$PYENV_ROOT/bin:$PATH"
+eval "$(pyenv init --path)"
+eval "$(pyenv init -)"
+eval "$(pyenv virtualenv-init -)"
+
