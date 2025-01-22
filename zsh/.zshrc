@@ -128,3 +128,9 @@ eval "$(pyenv init --path)"
 eval "$(pyenv init -)"
 eval "$(pyenv virtualenv-init -)"
 
+# Functions
+restart-sound() {
+    sudo systemctl restart sound.target
+    systemctl --user restart pipewire pipewire-pulse
+}
+

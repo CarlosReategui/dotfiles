@@ -10,6 +10,7 @@ return {
           "stylua",
           "prettier",
           "eslint_d",
+          "xmlformatter",
         },
       })
     end,
@@ -22,6 +23,9 @@ return {
           "lua_ls",
           "pylsp",
           "ts_ls",
+          -- "css-lsp",
+          "lemminx",
+          "java_language_server",
         },
       })
     end,
