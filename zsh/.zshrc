@@ -113,6 +113,7 @@ alias ke='deactivate'
 alias s='source ~/.zshrc'
 alias nf='fzf -m --preview="bat --color=always {}" --bind "enter:become(nvim {+})"' 
 alias p='python3'
+alias work='vlc ~/Music/brown.mp3 &'
 
 # fzf
 source <(fzf --zsh)
@@ -134,3 +135,8 @@ restart-sound() {
     systemctl --user restart pipewire pipewire-pulse
 }
 
+if command -v tmux &>/dev/null; then
+  if [ -z "$TMUX" ]; then
+    exec tmux
+  fi
+fi
