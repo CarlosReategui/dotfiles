@@ -4,12 +4,20 @@ return {
     config = function()
       require("mason").setup({
         ensure_installed = {
+          "google-java-format",
           "black",
-          -- "autopep8",
-          "isort",
-          "stylua",
-          "prettier",
+          "cssls",
+          "eslint",
           "eslint_d",
+          "isort",
+          "jdtls",
+          "lemminx",
+          "lua_ls",
+          "prettier",
+          "prettierd",
+          "pylsp",
+          "stylua",
+          "ts_ls",
           "xmlformatter",
         },
       })
@@ -20,12 +28,13 @@ return {
     config = function()
       require("mason-lspconfig").setup({
         ensure_installed = {
+          "cssls",
+          "eslint",
+          "jdtls",
+          "lemminx",
           "lua_ls",
           "pylsp",
           "ts_ls",
-          -- "css-lsp",
-          "lemminx",
-          "java_language_server",
         },
       })
     end,
@@ -36,9 +45,14 @@ return {
     config = function()
       local capabilities = require("cmp_nvim_lsp").default_capabilities()
       local lspconfig = require("lspconfig")
-      lspconfig.lua_ls.setup({
-        capabilities = capabilities,
-      })
+
+      local default_servers = { "cssls", "eslint", "lemminx", "lua_ls", "ts_ls" }
+      for _, server in ipairs(default_servers) do
+        if lspconfig[server] then
+          lspconfig[server].setup({ capabilities = capabilities })
+        end
+      end
+
       lspconfig.pylsp.setup({
         capabilities = capabilities,
         settings = {
@@ -51,12 +65,24 @@ return {
           },
         },
       })
-      lspconfig.eslint.setup({
+
+      local jdtls_path = vim.fn.stdpath("data") .. "/mason/packages/jdtls"
+      local lombok_path = jdtls_path .. "/lombok.jar"
+      local workspace_path = vim.fn.stdpath("cache") .. "/jdtls/workspace"
+
+      lspconfig.jdtls.setup({
+        cmd = {
+          jdtls_path .. "/bin/jdtls",
+          "--jvm-arg=-javaagent:" .. lombok_path,
+          "-configuration",
+          vim.fn.stdpath("cache") .. "/jdtls/config",
+          "-data",
+          workspace_path,
+        },
         capabilities = capabilities,
+        root_dir = lspconfig.util.root_pattern("pom.xml", "gradlew", "build.gradle", ".git"),
       })
-      lspconfig.ts_ls.setup({
-        capabilities = capabilities,
-      })
+
       vim.keymap.set("n", "K", vim.lsp.buf.hover, {})
       vim.keymap.set("n", "gd", vim.lsp.buf.definition, {})
       vim.keymap.set({ "n", "v" }, "<leader>ca", vim.lsp.buf.code_action, {})
