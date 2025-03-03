@@ -22,6 +22,8 @@ return {
 					"target",
 				},
 			},
+			follow_current_file = { enabled = true },
+			use_libuv_file_watcher = true,
 		},
 	},
 	config = function(_, opts)
