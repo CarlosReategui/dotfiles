@@ -1,53 +1,121 @@
+-- LSP Support
 return {
-	"neovim/nvim-lspconfig",
-	lazy = false,
-	config = function()
-		local capabilities = require("cmp_nvim_lsp").default_capabilities()
-		local lspconfig = require("lspconfig")
+  -- LSP Configuration
+  -- https://github.com/neovim/nvim-lspconfig
+  "neovim/nvim-lspconfig",
+  event = "VeryLazy",
+  dependencies = {
+    -- LSP Management
+    -- https://github.com/williamboman/mason.nvim
+    { "williamboman/mason.nvim" },
+    -- https://github.com/williamboman/mason-lspconfig.nvim
+    { "williamboman/mason-lspconfig.nvim" },
 
-		local default_servers = { "cssls", "eslint", "lemminx", "lua_ls", "ts_ls" }
-		for _, server in ipairs(default_servers) do
-			if lspconfig[server] then
-				lspconfig[server].setup({ capabilities = capabilities })
-			end
-		end
+    -- Auto-Install LSPs, linters, formatters, debuggers
+    -- https://github.com/WhoIsSethDaniel/mason-tool-installer.nvim
+    { "WhoIsSethDaniel/mason-tool-installer.nvim" },
 
-		lspconfig.pylsp.setup({
-			capabilities = capabilities,
-			settings = {
-				pylsp = {
-					plugins = {
-						pycodestyle = {
-							ignore = { "E501" },
-						},
-					},
-				},
-			},
-		})
+    -- Useful status updates for LSP
+    -- https://github.com/j-hui/fidget.nvim
+    { "j-hui/fidget.nvim",                        opts = {} },
 
-		local jdtls_path = vim.fn.stdpath("data") .. "/mason/packages/jdtls"
-		local lombok_path = jdtls_path .. "/lombok.jar"
-		local workspace_path = vim.fn.stdpath("cache") .. "/jdtls/workspace"
+    -- Additional lua configuration, makes nvim stuff amazing!
+    -- https://github.com/folke/neodev.nvim
+    { "folke/neodev.nvim",                        opts = {} },
+  },
+  config = function()
+    require("mason").setup({
+      ui = {
+        icons = {
+          package_installed = "✓",
+          package_pending = "➜",
+          package_uninstalled = "✗",
+        },
+      },
+    })
+    require("mason-lspconfig").setup({
+      -- Install these LSPs automatically
+      ensure_installed = {
+        "bashls",
+        "cssls",
+        "eslint",
+        "gradle_ls",
+        "groovyls",
+        "html",
+        "jdtls",
+        "jsonls",
+        "lemminx",
+        "lua_ls",
+        "marksman",
+        "pylsp",
+        "quick_lint_js",
+        "ts_ls",
+        "yamlls",
+      },
+    })
 
-		lspconfig.jdtls.setup({
-			cmd = {
-				jdtls_path .. "/bin/jdtls",
-				"--jvm-arg=-javaagent:" .. lombok_path,
-				"-configuration",
-				vim.fn.stdpath("cache") .. "/jdtls/config_linux",
-				"-data",
-				workspace_path,
-			},
-			capabilities = capabilities,
-			root_dir = lspconfig.util.root_pattern("pom.xml", "gradlew", "build.gradle", ".git"),
-		})
+    require("mason-tool-installer").setup({
+      -- Install these linters, formatters, debuggers automatically
+      ensure_installed = {
+        "java-debug-adapter",
+        "java-test",
+      },
+    })
 
-		vim.keymap.set("n", "K", vim.lsp.buf.hover, {})
-		vim.keymap.set("n", "gd", vim.lsp.buf.definition, {})
-		vim.keymap.set({ "n", "v" }, "<leader>ca", vim.lsp.buf.code_action, {})
-		vim.keymap.set("n", "<leader>rn", vim.lsp.buf.rename, {})
-		vim.keymap.set("n", "gi", vim.lsp.buf.implementation, {})
-		vim.keymap.set("n", "gr", vim.lsp.buf.references, {})
-		vim.keymap.set({ "n", "v" }, "<leader>se", ":lua vim.diagnostic.open_float()<CR>", {})
-	end,
+    -- There is an issue with mason-tools-installer running with VeryLazy, since it triggers on VimEnter which has already occurred prior to this plugin loading so we need to call install explicitly
+    -- https://github.com/WhoIsSethDaniel/mason-tool-installer.nvim/issues/39
+    vim.api.nvim_command("MasonToolsInstall")
+
+    local lspconfig = require("lspconfig")
+    local lsp_capabilities = require("cmp_nvim_lsp").default_capabilities()
+    local lsp_attach = function(client, bufnr)
+      -- Create your keybindings here...
+    end
+
+    -- Call setup on each LSP server
+    require("mason-lspconfig").setup_handlers({
+      function(server_name)
+        -- Don't call setup for JDTLS Java LSP because it will be setup from a separate config
+        if server_name ~= "jdtls" then
+          lspconfig[server_name].setup({
+            on_attach = lsp_attach,
+            capabilities = lsp_capabilities,
+          })
+        end
+      end,
+    })
+
+    -- Lua LSP settings
+    lspconfig.lua_ls.setup({
+      settings = {
+        Lua = {
+          diagnostics = {
+            -- Get the language server to recognize the `vim` global
+            globals = { "vim" },
+          },
+        },
+      },
+    })
+
+    -- Python LSP settings
+    lspconfig.pylsp.setup({
+      settings = {
+        pylsp = {
+          plugins = {
+            pycodestyle = {
+              ignore = { "E501" },
+            },
+          },
+        },
+      },
+    })
+
+    -- Globally configure all LSP floating preview popups (like hover, signature help, etc)
+    local open_floating_preview = vim.lsp.util.open_floating_preview
+    function vim.lsp.util.open_floating_preview(contents, syntax, opts, ...)
+      opts = opts or {}
+      opts.border = opts.border or "rounded" -- Set border to rounded
+      return open_floating_preview(contents, syntax, opts, ...)
+    end
+  end,
 }
