@@ -6,7 +6,7 @@ return {
 	},
 	opts = {
 		options = {
-			theme = "ayu_light",
+			theme = "catppuccin",
 		},
 	},
 	sections = {
