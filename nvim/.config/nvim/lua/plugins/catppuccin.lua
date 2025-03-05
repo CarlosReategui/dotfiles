@@ -5,6 +5,6 @@ return {
 	opts = {},
 	config = function(_, opts)
 		require("catppuccin").setup(opts)
-		vim.cmd.colorscheme("catppuccin-latte")
+		vim.cmd.colorscheme("catppuccin-mocha")
 	end,
 }
