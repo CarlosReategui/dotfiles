@@ -57,8 +57,10 @@ return {
     require("mason-tool-installer").setup({
       -- Install these linters, formatters, debuggers automatically
       ensure_installed = {
+        "google-java-format",
         "java-debug-adapter",
         "java-test",
+        "stylua",
       },
     })
 
