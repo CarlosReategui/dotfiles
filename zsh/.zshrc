@@ -140,3 +140,5 @@ if command -v tmux &>/dev/null; then
     exec tmux
   fi
 fi
+
+bindkey '^I^I' autosuggest-accept
