@@ -94,6 +94,9 @@ keymap.set("n", "<leader>go", function()
   if vim.bo.filetype == "java" then
     require("jdtls").organize_imports()
   end
+  if vim.bo.filetype == "python" then
+    vim.api.nvim_command("PyrightOrganizeImports")
+  end
 end)
 
 keymap.set("n", "<leader>gu", function()
@@ -103,16 +106,22 @@ keymap.set("n", "<leader>gu", function()
 end)
 
 keymap.set("n", "<leader>tc", function()
+  require("neo-tree.command").execute({ action = "close" })
   if vim.bo.filetype == "java" then
     require("jdtls").test_class()
-    require("neo-tree.command").execute({ action = "close" })
+  end
+  if vim.bo.filetype == "python" then
+    require("dap-python").test_class()
   end
 end)
 
 keymap.set("n", "<leader>tm", function()
+  require("neo-tree.command").execute({ action = "close" })
   if vim.bo.filetype == "java" then
     require("jdtls").test_nearest_method()
-    require("neo-tree.command").execute({ action = "close" })
+  end
+  if vim.bo.filetype == "python" then
+    require("dap-python").test_method()
   end
 end)
 
@@ -123,16 +132,16 @@ keymap.set("n", "<leader>bl", "<cmd>lua require'dap'.set_breakpoint(nil, nil, vi
 keymap.set("n", "<leader>br", "<cmd>lua require'dap'.clear_breakpoints()<cr>")
 keymap.set("n", "<leader>ba", "<cmd>Telescope dap list_breakpoints<cr>")
 keymap.set("n", "<leader>dc", "<cmd>lua require'dap'.continue()<cr>")
-keymap.set("n", "<leader>dj", "<cmd>lua require'dap'.step_over()<cr>")
-keymap.set("n", "<leader>dk", "<cmd>lua require'dap'.step_into()<cr>")
-keymap.set("n", "<leader>do", "<cmd>lua require'dap'.step_out()<cr>")
+keymap.set("n", "<leader>do", "<cmd>lua require'dap'.step_over()<cr>")
+keymap.set("n", "<leader>dj", "<cmd>lua require'dap'.step_into()<cr>")
+keymap.set("n", "<leader>dk", "<cmd>lua require'dap'.step_out()<cr>")
 keymap.set("n", "<leader>dd", function()
-  -- require("neo-tree.command").execute({ action = "show" })
+  require("neo-tree.command").execute({ action = "show" })
   require("dap").disconnect()
   require("dapui").close()
 end)
 keymap.set("n", "<leader>dt", function()
-  -- require("neo-tree.command").execute({ action = "show" })
+  require("neo-tree.command").execute({ action = "show" })
   require("dap").terminate()
   require("dapui").close()
 end)
