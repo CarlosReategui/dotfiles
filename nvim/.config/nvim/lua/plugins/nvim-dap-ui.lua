@@ -128,7 +128,7 @@ return {
     -- https://github.com/mfussenegger/nvim-dap/wiki/Debug-Adapter-installation
     dap.configurations.java = {
       {
-        name = "Tus Finanzas Custom Launch",
+        name = "Tus Finanzas Dev",
         type = "java",
         request = "launch",
         -- You need to extend the classPath to list your dependencies.
@@ -146,7 +146,28 @@ return {
         -- `nvim-jdtls` would automatically populate this property
         -- modulePaths = {},
         vmArgs = "" .. "-Xmx2g ",
-        args = "--spring.profiles.active=local",
+        args = "--spring.profiles.active=devhidden",
+      },
+      {
+        name = "Tus Finanzas Local",
+        type = "java",
+        request = "launch",
+        -- You need to extend the classPath to list your dependencies.
+        -- `nvim-jdtls` would automatically add the `classPaths` property if it is missing
+        -- classPaths = {},
+
+        -- If using multi-module projects, remove otherwise.
+        -- projectName = "yourProjectName",
+
+        -- javaExec = "java",
+        javaExec = "/usr/lib/jvm/java-21-openjdk/bin/java",
+        mainClass = "demo.tusfinanzas.TusFinanzasApplication",
+
+        -- If using the JDK9+ module system, this needs to be extended
+        -- `nvim-jdtls` would automatically populate this property
+        -- modulePaths = {},
+        vmArgs = "" .. "-Xmx2g ",
+        args = "--spring.profiles.active=localdebug",
       },
       {
         name = "Debug Launch (2GB)",

@@ -2,7 +2,7 @@ local keymap = vim.keymap
 
 -- General
 keymap.set("n", "<leader>wq", ":wq<CR>")
-keymap.set("n", "<leader>qq", ":q!<CR>")
+keymap.set("n", "<leader>qq", ":q<CR>")
 keymap.set("n", "<leader>ww", ":w<CR>")
 keymap.set("n", "gx", ":!open <c-r><c-a><CR>")
 
@@ -50,10 +50,28 @@ keymap.set("n", "<leader>qn", ":cnext<CR>")  -- jump to next quickfix list item
 keymap.set("n", "<leader>qp", ":cprev<CR>")  -- jump to prev quickfix list item
 keymap.set("n", "<leader>ql", ":clast<CR>")  -- jump to last quickfix list item
 keymap.set("n", "<leader>qc", ":cclose<CR>") -- close quickfix list
+-- keymap.set("n", "<C-q>", function()
+--   require("telescope.actions").smart_send_to_qflist()
+--   require("telescope.actions").open_qflist()
+-- end)
 
 -- Neotree
-keymap.set("n", "<leader>ee", ":Neotree filesystem reveal left<CR>", {})
-keymap.set("n", "<leader>er", ":Neotree toggle<CR>", {})
+-- keymap.set("n", "<leader>ee", ":Neotree filesystem reveal left<CR>", {})
+-- keymap.set("n", "<leader>er", ":Neotree toggle<CR>", {})
+
+-- Mini Files
+-- keymap.set("n", "<leader>ee", function()
+--   if not MiniFiles.close() then
+--     MiniFiles.open()
+--   end
+-- end)
+--
+keymap.set("n", "<leader>ee", function()
+  if not MiniFiles.close() then
+    MiniFiles.open(vim.api.nvim_buf_get_name(0), false)
+    MiniFiles.reveal_cwd()
+  end
+end)
 
 -- Vim-maximizer
 keymap.set("n", "<leader>sm", ":MaximizerToggle<CR>") -- toggle maximize tab
@@ -67,8 +85,7 @@ keymap.set("n", "<leader>gt", "<cmd>lua vim.lsp.buf.type_definition()<CR>")
 keymap.set("n", "<leader>gr", "<cmd>lua vim.lsp.buf.references()<CR>")
 keymap.set("n", "<leader>gs", "<cmd>lua vim.lsp.buf.signature_help()<CR>")
 keymap.set("n", "<leader>rn", "<cmd>lua vim.lsp.buf.rename()<CR>")
-keymap.set("n", "<leader>gf", "<cmd>lua vim.lsp.buf.format({async = true})<CR>")
-keymap.set("v", "<leader>gf", "<cmd>lua vim.lsp.buf.format({async = true})<CR>")
+keymap.set({ "n", "v" }, "<leader>gf", "<cmd>lua vim.lsp.buf.format({async = true})<CR>")
 keymap.set("n", "<leader>ga", "<cmd>lua vim.lsp.buf.code_action()<CR>")
 keymap.set("n", "<leader>gl", "<cmd>lua vim.diagnostic.open_float()<CR>")
 keymap.set("n", "<leader>gp", "<cmd>lua vim.diagnostic.goto_prev()<CR>")
@@ -89,6 +106,30 @@ keymap.set("n", "<leader>fi", require("telescope.builtin").lsp_incoming_calls, {
 keymap.set("n", "<leader>gp", ":Gitsigns preview_hunk<CR>", {})
 keymap.set("n", "<leader>gt", ":Gitsigns toggle_current_line_blame<CR>", {})
 
+-- Harpoon
+local harpoon = require("harpoon")
+vim.keymap.set("n", "<leader>ha", function()
+  harpoon:list():add()
+end)
+keymap.set("n", "<leader>h1", function()
+  harpoon:list():select(1)
+end)
+keymap.set("n", "<leader>h2", function()
+  harpoon:list():select(2)
+end)
+keymap.set("n", "<leader>h3", function()
+  harpoon:list():select(3)
+end)
+keymap.set("n", "<leader>h4", function()
+  harpoon:list():select(4)
+end)
+vim.keymap.set("n", "<leader>hh", function()
+  harpoon:list():prev({ ui_nav_wrap = true })
+end)
+vim.keymap.set("n", "<leader>hl", function()
+  harpoon:list():next({ ui_nav_wrap = true })
+end)
+
 -- Filetype-specific keymaps (these can be done in the ftplugin directory instead if you prefer)
 keymap.set("n", "<leader>go", function()
   if vim.bo.filetype == "java" then
@@ -106,7 +147,7 @@ keymap.set("n", "<leader>gu", function()
 end)
 
 keymap.set("n", "<leader>tc", function()
-  require("neo-tree.command").execute({ action = "close" })
+  -- require("neo-tree.command").execute({ action = "close" })
   if vim.bo.filetype == "java" then
     require("jdtls").test_class()
   end
@@ -116,12 +157,18 @@ keymap.set("n", "<leader>tc", function()
 end)
 
 keymap.set("n", "<leader>tm", function()
-  require("neo-tree.command").execute({ action = "close" })
+  -- require("neo-tree.command").execute({ action = "close" })
   if vim.bo.filetype == "java" then
     require("jdtls").test_nearest_method()
   end
   if vim.bo.filetype == "python" then
     require("dap-python").test_method()
+  end
+end)
+
+keymap.set("v", "<leader>rf", function()
+  if vim.bo.filetype == "java" then
+    require("jdtls").extract_method()
   end
 end)
 
@@ -131,17 +178,20 @@ keymap.set("n", "<leader>bc", "<cmd>lua require'dap'.set_breakpoint(vim.fn.input
 keymap.set("n", "<leader>bl", "<cmd>lua require'dap'.set_breakpoint(nil, nil, vim.fn.input('Log point message: '))<cr>")
 keymap.set("n", "<leader>br", "<cmd>lua require'dap'.clear_breakpoints()<cr>")
 keymap.set("n", "<leader>ba", "<cmd>Telescope dap list_breakpoints<cr>")
-keymap.set("n", "<leader>dc", "<cmd>lua require'dap'.continue()<cr>")
+keymap.set("n", "<leader>dc", function()
+  -- require("neo-tree.command").execute({ action = "close" })
+  require("dap").continue()
+end)
 keymap.set("n", "<leader>do", "<cmd>lua require'dap'.step_over()<cr>")
 keymap.set("n", "<leader>dj", "<cmd>lua require'dap'.step_into()<cr>")
 keymap.set("n", "<leader>dk", "<cmd>lua require'dap'.step_out()<cr>")
 keymap.set("n", "<leader>dd", function()
-  require("neo-tree.command").execute({ action = "show" })
+  -- require("neo-tree.command").execute({ action = "show" })
   require("dap").disconnect()
   require("dapui").close()
 end)
 keymap.set("n", "<leader>dt", function()
-  require("neo-tree.command").execute({ action = "show" })
+  -- require("neo-tree.command").execute({ action = "show" })
   require("dap").terminate()
   require("dapui").close()
 end)
